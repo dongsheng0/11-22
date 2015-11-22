@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+	body{ background: #721;}
+	div{ width:200px; height:50px; border:1px solid #000; margin:100px auto; position: relative;left:0; top:0;}
+	span{ width:100%; height:100%; position:absolute; left:0; top:0; text-align:center; line-height:50px; font-size:30px; font-weight:bold;}
+	.bottom{z-index: 1;}
+	.top{z-index: 2;		/* top其实就是蒙版，注意蒙版的写法，必须得有color是透明 */
+	  color:rgba(0,0,0,0);}
+	</style>
+	<script>
+	window.onload=function(){
+		//思路：其实是有俩个span，一个是文字蒙版，一个是能看见的字，下面的是字，上面的是蒙版
+		var oDiv=document.querySelector('div');
+		var oTop=oDiv.querySelector('.top');
+		var i=-50;//-的是因为，当开始进入的时候从左边平滑的进入
+		setInterval(function(){
+			i+=3;  //这个是调出来的，速度
+			oTop.style.background='-webkit-linear-gradient(-30deg,rgba(255,255,255,0) '+i+'px,rgba(255,255,255,1) '+(i+20)+'px,rgba(255,255,255,0) '+(i+40)+'px';
+			//这里的也是调出来的，注意这里是i i+20 i+40
+			oTop.style.WebkitBackgroundClip='text';
+			//这一句必须得写到里面，不能写到style里面，要不然出不来
+			if(i>=200){
+				i=-50;
+			}
+		},30);
+	};
+
+	</script>
+</head>
+<body>
+	<div>
+		<span class="bottom">滑动解锁</span>
+		<span class="top">滑动解锁</span>
+	</div>
+</body>
+</html>

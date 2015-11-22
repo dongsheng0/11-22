@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+	.play{ width:700px; margin:0 auto;}
+	video{ width:100%;}
+		.bar_box{ width:700px; height:30px; background: red; position: relative;left:0;top:0;}
+		.bar{ width:0; height:100%; background: blue;position:absolute;left:0; top:0;}
+		.bar_btn{ width:20px; height:100%; background: #000;position:absolute;left:0; top:0;}
+	}
+	</style>
+	<script>
+	function toDou(iNum){
+		return iNum<10?'0'+iNum:''+iNum;
+	}
+	function time2min(time){
+		var sMin = parseInt(time/60);
+		var sSec = parseInt(time%60);
+		return toDou(sMin)+':'+toDou(sSec);
+    }  
+	window.onload=function(){
+		var oV=document.querySelector('video');
+		var oPlay=document.querySelector('#play');
+		var oPause=document.querySelector('#pause');
+		var oStop=document.querySelector('#stop');
+		var oS=document.querySelector('span');
+		var oBarBox=document.querySelector('.bar_box');
+		var oBar=document.querySelector('.bar');
+		var oBarBtn=document.querySelector('.bar_btn');
+		oPlay.onclick=function(){
+			oV.play()
+		};
+		oPause.onclick=function(){
+			oV.pause();
+		};
+		oStop.onclick=function(){
+			oV.pause();
+			oV.currentTime=0;
+		};
+		
+		oV.ontimeupdate=function(){
+			oS.innerHTML=time2min(oV.currentTime)+'/'+time2min(oV.duration);
+			var scale=oV.currentTime/oV.duration;
+
+			oBar.style.width=scale*oBarBox.offsetWidth+'px';
+			oBarBtn.style.left=scale*(oBarBox.offsetWidth-oBarBtn.offsetWidth)+'px';
+
+		};
+		oBarBtn.onmousedown=function(ev){
+			var disX=ev.clientX-oBarBtn.offsetLeft;
+			document.onmousemove=function(ev){
+				var l=ev.clientX-disX;
+				if(l<0){
+					l=0;
+				}
+				if(l>oBarBox.offsetWidth-oBarBtn.offsetWidth){
+					l=oBarBox.offsetWidth-oBarBtn.offsetWidth;
+				}
+				oBarBtn.style.left=l+'px';
+				var scale2=l/(oBarBox.offsetWidth-oBarBtn.offsetWidth);
+				oBar.style.width=oBarBox.offsetWidth*scale2+'px';
+				oV.currentTime=oV.duration*scale2;
+
+			};
+			document.onmouseup=function(){
+				oV.play();
+				document.onmouseup=null;
+				document.onmousemove=null;
+			};
+			return false;
+		};
+
+	};
+	</script>
+</head>
+<body>
+<div class="play">
+	<video src="http://images.sohu.com/ytv/SH/Coke/64036020120714021103.mp4"></video>
+	<div class="bar_box">
+		<div class="bar"></div>
+		<div class="bar_btn"></div>
+	</div>
+	<div>
+		<input type="button" value="播放" id="play"/>
+		<input type="button" value="暂停" id="pause"/>
+		<input type="button" value="停止" id="stop"/>
+		<span></span>
+	</div>
+</div>
+</body>
+</html>
